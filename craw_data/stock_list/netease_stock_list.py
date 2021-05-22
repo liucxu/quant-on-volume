@@ -1,4 +1,5 @@
-import urllib
+import sys
+import urllib.request
 import json
 import csv
 from tqdm import tqdm
@@ -36,10 +37,10 @@ class Saver(object):
 
     def __init__(self, data):
         self.data = data
-        const_path = sys.path[0].replace("\\craw_data\\stock_list", "")
-        f = open(const_path + '\\const.json', 'r', encoding='utf8')
+        const_path = sys.path[0].replace("/craw_data/stock_list", "")
+        f = open(const_path + '/const.json', 'r', encoding='utf8')
         self.consts = json.loads(f.read())
-        self.file_path = self.consts['path']['stock_list']['netease'] + "\\stock_list.json"      # 存放目录
+        self.file_path = self.consts['path']['stock_list']['netease'] + "/stock_list.csv"      # 存放目录
 
     def save(self):
         # 新建文件, 写入文件头
@@ -57,11 +58,11 @@ class Saver(object):
             code = str(item['CODE'])
             code = code[1:7] if len(code) == 7 else code[:]
             code = "`" + code
-
-            row = [code, item['NAME'], item['MCAP'], item['MFSUM'], item['TCAP']]
-            csv_file = open(self.file_path, 'a', newline='')      # 追加
-            writer = csv.writer(csv_file)
-            writer.writerow(row)
+            if item.__contains__('NAME') and item.__contains__('MCAP') and item.__contains__('MFSUM') and item.__contains__('TCAP'):
+                row = [code, item['NAME'], item['MCAP'], item['MFSUM'], item['TCAP']]
+                csv_file = open(self.file_path, 'a', newline='')  # 追加
+                writer = csv.writer(csv_file)
+                writer.writerow(row)
 
 
 if __name__ == '__main__':
